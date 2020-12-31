@@ -15,7 +15,7 @@ function start() {
 		brick:{
 			width:80,
 			height:40,
-			lifes:5
+			lifes:1
 		},
 		ball:{
 			radius:10,
@@ -49,9 +49,9 @@ function start() {
 		"oooooooooooooooo",
 		"oooooooooooooooo",
 		"oooooooooooooooo",
+		"ooooooxooxoooooo",
 		"oooooooooooooooo",
-		"oooooooooooooooo",
-		"oooooooooooooooo",
+		"oooooooxxooooooo",
 		"oooooooooooooooo",
 		"oooooooooooooooo",
 		"oooooooooooooooo",
@@ -80,7 +80,25 @@ function start() {
 		width:settings.me.width,
 		height:20,
 		v:settings.ball.v,
-		isMe:true
+		isMe:true,
+		goNextFrame(){
+			for ( var dir in _keydown ){
+				if(_keydown.l){
+					this.left-=this.v;
+				}
+				if(_keydown.r){
+					this.left+=this.v;
+				}
+				if(_keydown.d){
+					bricks = initBricksArray();
+				}
+				if(_keydown.u){
+					ball.angle = 45;
+				}
+				this.left = Math.max(me.left,0);
+				this.left = Math.min(me.left,edge.right-me.width);
+			}
+		}
 	};
 	var ball = {
 		radius:settings.ball.radius,
@@ -313,29 +331,14 @@ function start() {
 		canvas.clear();
 		
 
-		for ( var dir in _keydown ){
-			
-			if(_keydown.l){
-				me.left-=me.v;
-			}
-			if(_keydown.r){
-				me.left+=me.v;
-			}
-			if(_keydown.d){
-				bricks = initBricksArray();
-			}
-			if(_keydown.u){
-				ball.angle = 45;
-			}
-			me.left = Math.max(me.left,0);
-			me.left = Math.min(me.left,edge.right-me.width);
-		}
+
 		function isCrashed(){
 			var r = ball.top>edge.bottom;
 			r&&console.log('isCrashed');
 			return r;
 		}
 
+		me.goNextFrame();
 		ball.goNextFrame();
 		
 
@@ -373,6 +376,9 @@ function start() {
 		canvas.renderAll();
 		!isCrashed() && fabric.util.requestAnimFrame(oneFrame,canvas.getElement());
 	}
+
+
+
 	onResize();
 	updateEdge();
 	me.left = (edge.right- me.width)/2;
